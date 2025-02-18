@@ -40,6 +40,7 @@ spec:
           - >
               kubectl delete clusterpolicy cluster-policy;
               kubectl delete crd clusterpolicies.nvidia.com;
+              kubectl label nodes ipp1-2183 ipp1-2183-
 
       restartPolicy: OnFailure
 {{- end }}
