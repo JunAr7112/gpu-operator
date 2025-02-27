@@ -20,6 +20,7 @@ on:
       - "pull-request/[0-9]+"
       - main
       - release-*
+      - Remove_NVIDIA_labels 
 
 jobs:
   ### Configuration checks ###
