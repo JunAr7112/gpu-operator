@@ -54,6 +54,7 @@ COPY *.mk .
 ARG VERSION="unknown"
 ARG GIT_COMMIT="unknown"
 RUN make gpu-operator
+RUN go build -o util cmd/gpu-cleanup/main.go
 
 FROM nvcr.io/nvidia/cuda:12.8.0-base-ubi9
 
@@ -76,6 +77,7 @@ LABEL vsc-ref=${GIT_COMMIT}
 
 WORKDIR /
 COPY --from=builder /workspace/gpu-operator /usr/bin/
+COPY --from=builder /workspace/util /usr/bin/
 
 RUN mkdir -p /opt/gpu-operator/manifests
 COPY assets /opt/gpu-operator/
