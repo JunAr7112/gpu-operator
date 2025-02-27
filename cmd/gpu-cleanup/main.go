@@ -13,12 +13,12 @@ import (
 
 func main() {
 	// Set up the Kubernetes client
-	config, err := clientcmd.BuildConfigFromFlags("", "") //connects to the kubeconfig file which is used by kubectl and other clients like client-go to interact with the Kubernetes API server
+	config, err := clientcmd.BuildConfigFromFlags("", "") // connects to the kubeconfig file which is used by kubectl and other clients like client-go to interact with the Kubernetes API server
 	if err != nil {
 		log.Fatalf("Failed to build config: %v", err)
 	}
 	// Create the clientset
-	clientset, err := kubernetes.NewForConfig(config) //a clientset is a client for the Kubernetes API server and is used to interact with the API server
+	clientset, err := kubernetes.NewForConfig(config) // a clientset is a client for the Kubernetes API server and is used to interact with the API server
 	if err != nil {
 		log.Fatalf("Failed to create clientset: %v", err)
 	}
