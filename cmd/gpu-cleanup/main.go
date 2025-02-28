@@ -1,7 +1,3 @@
-/*
-Copyright 2021.
-*/
-
 package main
 
 import (
@@ -16,7 +12,7 @@ import (
 )
 
 func main() {
-	// Set up the Kubernetes client
+	// Set up the Kubernetes clients
 	config, err := clientcmd.BuildConfigFromFlags("", "")
 	if err != nil {
 		log.Fatalf("Failed to build config: %v", err)
