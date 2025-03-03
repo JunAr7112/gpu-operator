@@ -24,12 +24,15 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/tools/clientcmd"
+
+	// "k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/rest"
 )
 
 func main() {
 	// Set up the Kubernetes clients
-	config, err := clientcmd.BuildConfigFromFlags("", "")
+	config, err := rest.InClusterConfig()
+	// config, err := clientcmd.BuildConfigFromFlags("", "/localhome/local-agadiyar/.kube/config")
 	if err != nil {
 		log.Fatalf("Failed to build config: %v", err)
 	}
@@ -47,11 +50,15 @@ func main() {
 	for _, node := range nodes.Items {
 		fmt.Printf("Node: %s\n", node.Name)
 		labels := node.Labels
+		fmt.Printf("Labels: %v\n", node.Labels)
 		for key := range labels {
 			if strings.Contains(key, "nvidia.com/gpu.deploy") || strings.Contains(key, "nvidia.com/gpu.present") {
 				delete(labels, key)
 			}
 		}
+		// fmt.Printf("Labels: %v\n", labels)
+		node.Labels = labels
+		fmt.Printf("Updated Labels: %v\n", node.Labels)
 		// Update the node
 		_, err = clientset.CoreV1().Nodes().Update(context.TODO(), &node, metav1.UpdateOptions{})
 		if err != nil {

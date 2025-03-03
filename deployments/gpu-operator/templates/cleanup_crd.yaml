@@ -7,7 +7,7 @@ metadata:
   annotations:
     "helm.sh/hook": pre-delete
     "helm.sh/hook-weight": "1"
-    "helm.sh/hook-delete-policy": never #hook-succeeded,before-hook-creation
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation #never
   labels:
     {{- include "gpu-operator.labels" . | nindent 4 }}
     app.kubernetes.io/component: "gpu-operator"
@@ -32,22 +32,18 @@ spec:
       {{- end }}
       containers:
         - name: cleanup-crd
-          image: {{ include "gpu-operator.fullimage" . }}
+          image: "ghcr.io/junar7112/gpu-operator:aa3bf625"
+          #image: {{ include "gpu-operator.fullimage" . }}
           imagePullPolicy: {{ .Values.operator.imagePullPolicy }}
           #volumeMounts:
           #  - mountPath: /gpu-operator/cmd/gpu-cleanup
           #    name: gpu-operator-cleanup-crd
           command: ["sleep", "infinity"]
-          #command:
-          #- /bin/sh
-          #- -c
-          #- >
-              #kubectl delete clusterpolicy cluster-policy;
-              #kubectl delete crd clusterpolicies.nvidia.com;
-              #wget https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
-              #sudo tar -C /usr/local -xvzf go1.23.0.linux-amd64.tar.gz
-              #go run /gpu-operator/cmd/gpu-cleanup/main.go
-              #sleep 500
+          command:
+          - /bin/sh
+          - -c
+          - >
+              ./usr/bin/util
       #volumes:
       #  - name: gpu-operator-cleanup-crd
       #    hostPath:
