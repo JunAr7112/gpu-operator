@@ -1,0 +1,23 @@
+# Required NSPECT registration
+nspect_id: "NSPECT-TJ79-V0EQ"
+# Optional supporting info (some teams want these tracked)
+
+
+# Where to copy FROM
+source:
+  org: "xh4i5rvcu5mr"
+  team: "nim"
+# Where to copy TO
+target:
+  org: "nvidia"
+  team: ""
+
+# List of artifacts to publish
+# "type" must be: model, container, resource, chart, collection
+artifacts:
+  - source_name: "parakeet-ctc-riva-0-6b"
+    source_version: "en-us_l40x1_fp16_24.03"
+    type: "model"
+
+options: {}
+
