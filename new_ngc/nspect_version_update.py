@@ -261,13 +261,13 @@ def main():
         ssa_url = (
             "https://hsxntwlenuyxjgvcdt5ifkp9x78g9spcncmtwuyoxws.stg.ssa.nvidia.com"
         )
-        CLIENT_ID = os.environ.get("SSA_STG_CLIENT_ID")
-        CLIENT_SECRET = os.environ.get("SSA_STG_CLIENT_SECRET")
+        CLIENT_ID = "nvssa-prd-paIZAOWxlQyDLPO0pONiRkF22NO9uZmrOcLRzQV0xjo" #os.environ.get("SSA_STG_CLIENT_ID")
+        CLIENT_SECRET = "ssap-8pLPFMsbv08qDk778Q5" #os.environ.get("SSA_STG_CLIENT_SECRET")
     else:
         logger.info("Using prod SSA")
         ssa_url = "https://4ubglassowmtsi7ogqwarmut7msn1q5ynts62fwnr1i.ssa.nvidia.com"
-        CLIENT_ID = os.environ.get("SSA_CLIENT_ID")
-        CLIENT_SECRET = os.environ.get("SSA_CLIENT_SECRET")
+        CLIENT_ID = "nvssa-prd-paIZAOWxlQyDLPO0pONiRkF22NO9uZmrOcLRzQV0xjo" #os.environ.get("SSA_CLIENT_ID")
+        CLIENT_SECRET = "ssap-8pLPFMsbv08qDk778Q5" #os.environ.get("SSA_CLIENT_SECRET")
 
     logger.info("creating token manager")
     token_manager = SSAToken(

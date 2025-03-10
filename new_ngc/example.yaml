@@ -1,12 +1,12 @@
 # Required NSPECT registration
-nspect_id: "NSPECT-TJ79-V0EQ"
+nspect_id: "NSPECT-ZPNK-IK0N"
 # Optional supporting info (some teams want these tracked)
 
 
 # Where to copy FROM
 source:
-  org: "xh4i5rvcu5mr"
-  team: "nim"
+  org: "6aeea0dee9040e9d6ab588fce06e12eb5fd5fcc0"
+  team: "gpu-operator"
 # Where to copy TO
 target:
   org: "nvidia"
