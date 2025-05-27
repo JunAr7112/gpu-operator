@@ -78,11 +78,11 @@ spec:
         - name: nvidia-kata-manager-entrypoint
           configMap:
             name: nvidia-kata-manager-entrypoint
-            defaultMode: 448
+            defaultMode: 493
         - name: nvidia-kata-manager-config
           configMap:
             name: nvidia-kata-manager-config
-            defaultMode: 448
+            defaultMode: 493
         - name: host-root
           hostPath:
             path: /
