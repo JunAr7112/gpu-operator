@@ -107,6 +107,55 @@ data:
           mig-enabled: true
           mig-devices:
             "4g.96gb+gfx": 1
+
+      # RTX-PRO-6000D-84GB
+      all-1g.42gb:
+        - device-filter: ["0x2bb910DE"]
+          devices: all
+          mig-enabled: true
+          mig-devices:
+            "1g.42gb": 2
+
+      # RTX-PRO-6000D-84GB
+      all-1g.42gb.gfx:
+        - device-filter: ["0x2bb910DE"]
+          devices: all
+          mig-enabled: true
+          mig-devices:
+            "1g.42gb+gfx": 2
+
+      # RTX-PRO-6000D-42GB
+      all-1g.42gb.me.all:
+        - device-filter: ["0x2bb910DE"]
+          devices: all
+          mig-enabled: true
+          mig-devices:
+            "1g.42gb+me.all": 1
+
+      # RTX-PRO-6000D-42GB
+      all-1g.42gb-me:
+        - device-filter: ["0x2bb910DE"]
+          devices: all
+          mig-enabled: true
+          mig-devices:
+            "1g.42gb-me": 2
+
+      # RTX-PRO-6000D-84GB
+      all-2g.84gb:
+        - device-filter: ["0x2bb910DE"]
+          devices: all
+          mig-enabled: true
+          mig-devices:
+            "2g.84gb": 1
+
+      # RTX-PRO-6000D-84GB
+      all-2g.84gb.gfx:
+        - device-filter: ["0x2bb910DE"]
+          devices: all
+          mig-enabled: true
+          mig-devices:
+            "2g.84gb+gfx": 1
+
     
       # H100-80GB, H800-80GB, A100-80GB, A800-80GB, A100-40GB, A800-40GB
       all-1g.10gb:
