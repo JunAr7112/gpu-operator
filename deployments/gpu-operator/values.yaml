@@ -141,9 +141,9 @@ driver:
   # use pre-compiled packages for NVIDIA driver installation.
   # only supported for as a tech-preview feature on ubuntu22.04 kernels.
   usePrecompiled: false
-  repository: nvcr.io/nvidia
+  repository: ghcr.io/nvidia
   image: driver
-  version: "580.82.07"
+  version: "1f297cc2-535.274.02"
   imagePullPolicy: IfNotPresent
   imagePullSecrets: []
   startupProbe:
