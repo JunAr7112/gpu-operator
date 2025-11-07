@@ -25,7 +25,7 @@ spec:
           command: ['sh', '-c']
           # TODO: Account for pre-installed vGPU Manager. Currently validator
           # creates a different status file when driver is pre-installed.
-          args: ["until [ -f /run/nvidia/validations/vgpu-manager-ready ]; do echo waiting for NVIDIA vGPU Manager to be setup; sleep 5; done"]
+          args: ["until [ -f /run/nvidia/validations/vgpu-manager-ready ] && ls /host/sys/bus/pci/devices/*/virtfn*/nvidia/creatable_vgpu_types >/dev/null 2>&1; do echo waiting for NVIDIA vGPU Manager and SR-IOV Virtual Functions to be ready; sleep 5; done"]
           securityContext:
             privileged: true
           volumeMounts:

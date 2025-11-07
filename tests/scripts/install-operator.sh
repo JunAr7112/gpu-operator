@@ -11,13 +11,14 @@ source ${SCRIPT_DIR}/.definitions.sh
 OPERATOR_REPOSITORY=$(dirname ${OPERATOR_IMAGE})
 
 : ${OPERATOR_OPTIONS:=""}
-OPERATOR_OPTIONS="${OPERATOR_OPTIONS} --set operator.repository=${OPERATOR_REPOSITORY} --set validator.repository=${OPERATOR_REPOSITORY}"
+OPERATOR_OPTIONS="${OPERATOR_OPTIONS} --set-string operator.repository=${OPERATOR_REPOSITORY} --set-string validator.repository=${OPERATOR_REPOSITORY}"
 
 if [[ -n "${OPERATOR_VERSION}" ]]; then
-OPERATOR_OPTIONS="${OPERATOR_OPTIONS} --set operator.version=${OPERATOR_VERSION} --set validator.version=${OPERATOR_VERSION}"
+OPERATOR_OPTIONS="${OPERATOR_OPTIONS} --set-string operator.version=${OPERATOR_VERSION} --set-string validator.version=${OPERATOR_VERSION}"
 fi
 
 OPERATOR_OPTIONS="${OPERATOR_OPTIONS} --set operator.defaultRuntime=${CONTAINER_RUNTIME}"
+OPERATOR_OPTIONS="${OPERATOR_OPTIONS} --set operator.imagePullPolicy=Always --set validator.imagePullPolicy=Always"
 
 # We set up the options for the toolkit container
 : ${TOOLKIT_CONTAINER_OPTIONS:=""}
@@ -27,7 +28,7 @@ TOOLKIT_CONTAINER_OPTIONS="${TOOLKIT_CONTAINER_OPTIONS} --set toolkit.repository
 fi
 
 # Create the test namespace
-kubectl create namespace "${TEST_NAMESPACE}"
+#kubectl create namespace "${TEST_NAMESPACE}"
 
 # Create k8s secret for pulling vgpu images from nvcr.io 
 if [[ "${GPU_MODE}" == "vgpu" ]]; then
@@ -44,7 +45,7 @@ if [[ "${GPU_MODE}" == "vgpu" ]]; then
 fi
 
 # Run the helm install command
-${HELM} install ${PROJECT_DIR}/deployments/gpu-operator --generate-name \
+${HELM} install gpu-operator ${PROJECT_DIR}/deployments/gpu-operator \
 	-n "${TEST_NAMESPACE}" \
 	${OPERATOR_OPTIONS} \
 	${TOOLKIT_CONTAINER_OPTIONS} \
