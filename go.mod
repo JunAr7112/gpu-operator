@@ -1,25 +1,16 @@
 module github.com/NVIDIA/gpu-operator
 
-<<<<<<< HEAD
-go 1.24.4
-=======
 go 1.25.0
->>>>>>> 8cdfc2c2 (Bump container toolkit to v1.18.1)
 
 require (
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/NVIDIA/go-nvlib v0.8.1
 	github.com/NVIDIA/k8s-kata-manager v0.2.3
-<<<<<<< HEAD
-	github.com/NVIDIA/k8s-operator-libs v0.0.0-20250709180754-c80af13d73e3
-	github.com/NVIDIA/nvidia-container-toolkit v1.18.0
-=======
 	github.com/NVIDIA/k8s-operator-libs v0.0.0-20251027171627-45ccd0c3dd32
 	github.com/NVIDIA/nvidia-container-toolkit v1.18.1
->>>>>>> 8cdfc2c2 (Bump container toolkit to v1.18.1)
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc
 	github.com/go-logr/logr v1.4.3
-	github.com/onsi/ginkgo/v2 v2.26.0
+	github.com/onsi/ginkgo/v2 v2.27.1
 	github.com/onsi/gomega v1.38.2
 	github.com/openshift/api v0.0.0-20251021124544-a2cb0c5d994d
 	github.com/openshift/client-go v0.0.0-20251015124057-db0dee36e235
