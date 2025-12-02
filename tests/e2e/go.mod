@@ -1,6 +1,10 @@
 module github.com/NVIDIA/gpu-operator/tests/e2e
 
+<<<<<<< HEAD
 go 1.24.3
+=======
+go 1.25.0
+>>>>>>> 8cdfc2c2 (Bump container toolkit to v1.18.1)
 
 require (
 	github.com/mittwald/go-helm-client v0.12.18
