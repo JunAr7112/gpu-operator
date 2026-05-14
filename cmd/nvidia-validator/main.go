@@ -749,7 +749,17 @@ func validateHostDriver(silent bool) error {
 		disableDevCharSymlinkCreation = true
 		return nil
 	}
-	fileInfo, err := os.Lstat("/host/usr/bin/nvidia-smi")
+
+	nvidiaSMIPath := "/host/usr/bin/nvidia-smi"
+	if target, err := os.Readlink("/host/usr/bin"); err == nil {
+		if filepath.IsAbs(target) {
+			nvidiaSMIPath = filepath.Join("/host", strings.TrimPrefix(target, "/"), "nvidia-smi")
+		} else {
+			nvidiaSMIPath = filepath.Join("/host/usr", target, "nvidia-smi")
+		}
+	}
+
+	fileInfo, err := os.Lstat(nvidiaSMIPath)
 	if err != nil {
 		return fmt.Errorf("no 'nvidia-smi' file present on the host: %w", err)
 	}
