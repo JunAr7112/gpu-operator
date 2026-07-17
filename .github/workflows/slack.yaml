@@ -1,0 +1,146 @@
+name: Slack issue digest
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 15 * * 1-5"   # digest: 15:00 UTC on weekdays
+    - cron: "0 15 * * 1,3"   # dm-user: 15:00 UTC on Mon and Wed
+
+permissions: {}
+
+env:
+  # Space-separated list of repos to report on (owner/name)
+  REPOS: "NVIDIA/gpu-operator NVIDIA/gpu-driver-container NVIDIA/mig-parted NVIDIA/go-nvlib NVIDIA/go-nvml NVIDIA/k8s-driver-manager NVIDIA/libnvidia-container NVIDIA/nvidia-container-toolkit NVIDIA/k8s-device-plugin NVIDIA/go-gpuallocator"
+  # Space-separated GitHub logins. An issue is NOT flagged if any of these
+  # users has commented on it at least once.
+  MAINTAINERS: "rajathagasthya"
+
+jobs:
+  # Temporarily disabled while testing the dm-user job. Re-enable when ready.
+  # digest:
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 10
+  #   # Runs on manual dispatch or the weekday digest schedule.
+  #   if: ${{ github.event_name == 'workflow_dispatch' || github.event.schedule == '0 15 * * 1-5' }}
+  #   env:
+  #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+  #
+  #   steps:
+  #     - name: Gather issue counts
+  #       id: gather
+  #       env:
+  #         # Used to authenticate GitHub API calls for higher rate limits. The
+  #         # built-in token can read public data (issue counts) across all the
+  #         # listed public repos.
+  #         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #       run: |
+  #         set -euo pipefail
+  #
+  #         cutoff=$(date -u -d "-24 hours" +%Y-%m-%dT%H:%M:%SZ)
+  #
+  #         blocks=$(jq -n \
+  #           '[
+  #             {type:"header",text:{type:"plain_text",text:"📊 Issue digest"}},
+  #             {type:"context",elements:[{type:"mrkdwn",text:"Newly opened/closed reflects the last 24h"}]}
+  #           ]')
+  #
+  #         count() { gh api -X GET search/issues -f q="$1" --jq '.total_count'; }
+  #
+  #         for repo in $REPOS; do
+  #           open=$(count "repo:$repo is:issue is:open")
+  #           new_open=$(count "repo:$repo is:issue created:>=$cutoff")
+  #           new_closed=$(count "repo:$repo is:issue closed:>=$cutoff")
+  #
+  #           line="*<https://github.com/$repo/issues|$repo>*
+  # • Open: $open
+  # • Newly opened: $new_open
+  # • Newly closed: $new_closed"
+  #
+  #           blocks=$(jq --arg t "$line" '. + [{type:"section",text:{type:"mrkdwn",text:$t}}]' <<< "$blocks")
+  #         done
+  #
+  #         {
+  #           echo "blocks<<EOF"
+  #           echo "$blocks"
+  #           echo "EOF"
+  #         } >> "$GITHUB_OUTPUT"
+  #
+  #     - name: Post to Slack
+  #       if: ${{ env.SLACK_BOT_TOKEN != '' }}
+  #       uses: slackapi/slack-github-action@v3.0.5
+  #       with:
+  #         method: chat.postMessage
+  #         token: ${{ secrets.SLACK_BOT_TOKEN }}
+  #         payload: |
+  #           {
+  #             "channel": "${{ secrets.SLACK_CORE_TEAM_CHANNEL_ID }}",
+  #             "text": "Issue digest",
+  #             "blocks": ${{ steps.gather.outputs.blocks }}
+  #           }
+
+  dm-user:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Runs on manual dispatch or the Mon/Wed schedule.
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.schedule == '0 15 * * 1,3' }}
+    env:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      # Recipient's Slack member ID (e.g. U0123456789), stored as a secret
+      SLACK_DM_USER_ID: ${{ secrets.SLACK_DM_USER_ID }}
+
+    steps:
+      - name: Find stale uncommented issues
+        id: stale
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          # Issues created on or before this timestamp are >= 72h old.
+          cutoff=$(date -u -d "-72 hours" +%Y-%m-%dT%H:%M:%SZ)
+
+          # Exclude any issue a maintainer has already commented on.
+          exclude=""
+          for m in $MAINTAINERS; do
+            exclude="$exclude -commenter:$m"
+          done
+
+          blocks=$(jq -n \
+            '[{type:"header",text:{type:"plain_text",text:"⚠️ Open issues >72h old with no maintainer comment"}}]')
+          found=0
+
+          for repo in $REPOS; do
+            items=$(gh api -X GET search/issues \
+              -f q="repo:$repo is:issue is:open created:<=$cutoff$exclude" \
+              -F per_page=100 \
+              --jq '.items')
+
+            n=$(jq 'length' <<< "$items")
+            [ "$n" -eq 0 ] && continue
+            found=$((found + n))
+
+            list=$(jq -r '[.[] | "• <\(.html_url)|#\(.number) \(.title)>"] | join("\n")' <<< "$items")
+            section="*$repo* ($n)
+$list"
+            blocks=$(jq --arg t "$section" '. + [{type:"section",text:{type:"mrkdwn",text:$t}}]' <<< "$blocks")
+          done
+
+          {
+            echo "found=$found"
+            echo "blocks<<EOF"
+            echo "$blocks"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: DM the user about stale issues
+        if: ${{ env.SLACK_BOT_TOKEN != '' && env.SLACK_DM_USER_ID != '' && steps.stale.outputs.found != '0' }}
+        uses: slackapi/slack-github-action@v3.0.5
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            {
+              "channel": "${{ env.SLACK_DM_USER_ID }}",
+              "text": "Open issues over 72h old with no maintainer comment",
+              "blocks": ${{ steps.stale.outputs.blocks }}
+            }
